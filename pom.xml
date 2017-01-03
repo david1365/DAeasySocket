@@ -28,7 +28,7 @@
                     <archive>
                         <manifest>
                             <!-- Jar file entry point -->
-                            <mainClass>daeasysocket.testrun</mainClass>
+                            <mainClass>ir.daak1365.daeasysocket.testrun</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
