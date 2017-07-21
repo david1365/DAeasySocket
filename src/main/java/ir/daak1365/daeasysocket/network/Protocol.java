@@ -33,6 +33,10 @@ public abstract class Protocol implements Runnable {
 
     }
 
+    public void dataReceived(DAInputStream data) throws IOException{
+
+    }
+
     public abstract void connectionMade();
     public abstract void connectionLost();
     public abstract void connectionTimeout();

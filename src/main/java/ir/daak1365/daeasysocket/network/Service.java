@@ -10,7 +10,7 @@ import java.net.Socket;
 /**
  * Created by david on 1/4/17.
  */
-public final class Service implements Runnable{
+public final class Service implements Runnable {
     private ServerSocket serverSocket;
     private Factory factory;
     private int port;
