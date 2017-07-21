@@ -10,27 +10,29 @@ import java.io.*;
 
 public class TestServerSocket extends Thread {
     private ServerSocket serverSocket;
+    private  Socket clientServerSocket;
+    private   DataInputStream in;
+    private  DataOutputStream out;
 
     public TestServerSocket(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         serverSocket.setSoTimeout(10000);
+
+        System.out.println("Waiting for client on port " +
+                serverSocket.getLocalPort() + "...");
+        clientServerSocket = serverSocket.accept();
+
+        System.out.println("Just connected to " + clientServerSocket.getRemoteSocketAddress());
+        in = new DataInputStream(clientServerSocket.getInputStream());
+        out = new DataOutputStream(clientServerSocket.getOutputStream());
     }
 
     public void run() {
         while(true) {
             try {
-                System.out.println("Waiting for client on port " +
-                        serverSocket.getLocalPort() + "...");
-                Socket server = serverSocket.accept();
-
-                System.out.println("Just connected to " + server.getRemoteSocketAddress());
-                DataInputStream in = new DataInputStream(server.getInputStream());
-
                 System.out.println(in.readUTF());
-                DataOutputStream out = new DataOutputStream(server.getOutputStream());
-                out.writeUTF("Thank you for connecting to " + server.getLocalSocketAddress()
-                        + "\nGoodbye!");
-                server.close();
+                out.writeUTF("Thank you for connecting to " + clientServerSocket.getLocalSocketAddress());
+                //server.close();
 
             }catch(SocketTimeoutException s) {
                 System.out.println("Socket timed out!");
