@@ -12,7 +12,7 @@ import java.net.SocketTimeoutException;
  */
 public abstract class Protocol implements Runnable {
     protected Socket socket;
-    protected OutputStream outputStream;
+    protected DAOutputStream dataOutput;
 
     public Socket getSocket() {
         return socket;
@@ -20,22 +20,20 @@ public abstract class Protocol implements Runnable {
 
     public void setSocket(Socket socket) throws IOException {
         this.socket = socket;
-        this.outputStream = this.socket.getOutputStream();
+        this.dataOutput = new DAOutputStream(this.socket.getOutputStream());
 
         connectionMade();
     }
 
-    public void dataReceived(String data) throws IOException{
+//    public void dataReceived(String data) throws IOException{
+//
+//    }
+//
+//    public void dataReceived(byte[] data) throws IOException{
+//
+//    }
 
-    }
-
-    public void dataReceived(byte[] data) throws IOException{
-
-    }
-
-    public void dataReceived(DAInputStream data) throws IOException{
-
-    }
+    public abstract void dataReceived(DAInputStream dataInput) throws IOException;
 
     public abstract void connectionMade();
     public abstract void connectionLost();
@@ -60,20 +58,19 @@ public abstract class Protocol implements Runnable {
             InputStream inputStream = null;
 
             try {
-                inputStream = socket.getInputStream();
-                DataInputStream in = new DataInputStream(inputStream);
+                DAInputStream dataInput = new DAInputStream(socket.getInputStream());
 
 //                if(inputStream.read() <= -1){
 //                    connectionLost();
 //                    break;
 //                }
 
-                byte[] data = new byte[in.available()];
-                in.readFully(data);
+//                byte[] data = new byte[in.available()];
+//                in.readFully(data);
 
                // String stringData = new String(data);
 
-                dataReceived(data);
+                dataReceived(dataInput);
             }catch(SocketTimeoutException s) {
                 connectionTimeout();
                 break;

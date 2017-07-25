@@ -1,3 +1,4 @@
+import ir.daak1365.daeasysocket.network.DAInputStream;
 import ir.daak1365.daeasysocket.network.Protocol;
 
 import java.io.DataInputStream;
@@ -11,11 +12,13 @@ import java.io.InputStream;
 public class PubProtocl extends Protocol {
 
     public void dataReceived(byte[] data) throws IOException {
-        System.out.println("client " + new String(data));
 
-        DataOutputStream dataOutputStream = new DataOutputStream(this.outputStream);
+    }
 
-        dataOutputStream.writeUTF("damet garm");
+    public void dataReceived(DAInputStream dataInput) throws IOException {
+        System.out.println("client " + dataInput.toString());
+
+        dataOutput.writeUTF("damet garm");
     }
 
     public void connectionMade() {
