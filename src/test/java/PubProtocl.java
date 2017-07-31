@@ -11,10 +11,6 @@ import java.io.InputStream;
  */
 public class PubProtocl extends Protocol {
 
-    public void dataReceived(byte[] data) throws IOException {
-
-    }
-
     public void dataReceived(DAInputStream dataInput) throws IOException {
         System.out.println("client " + dataInput.toString());
 

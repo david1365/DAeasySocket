@@ -1,11 +1,11 @@
 package ir.daak1365.daeasysocket.network;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Created by david on 1/4/17.
@@ -33,11 +33,11 @@ public abstract class Protocol implements Runnable {
 //
 //    }
 
-    public abstract void dataReceived(DAInputStream dataInput) throws IOException;
+    protected abstract void dataReceived(DAInputStream dataInput) throws IOException;
 
-    public abstract void connectionMade();
-    public abstract void connectionLost();
-    public abstract void connectionTimeout();
+    protected abstract void connectionMade();
+    protected abstract void connectionLost();
+    protected abstract void connectionTimeout();
 
 
     public void run() {
@@ -54,30 +54,50 @@ public abstract class Protocol implements Runnable {
 //            break;
 //        }
 
-        while (true){
-            InputStream inputStream = null;
+        try {
 
-            try {
-                DAInputStream dataInput = new DAInputStream(socket.getInputStream());
+            while (true){
 
-//                if(inputStream.read() <= -1){
-//                    connectionLost();
-//                    break;
+                DataInputStream  dataInput = new DataInputStream(socket.getInputStream());
+
+//                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+    //                if(inputStream.read() <= -1){
+    //                    connectionLost();
+    //                    break;
+    //                }
+
+               // DAInputStream daInputStream = new DAInputStream(dataInput);
+                //byte[] data2 = new byte[in.available()];
+                //in.readLine();
+//                if (dataInput.available() <= 0){
+//                    //try {
+//                        synchronized (this){
+//                            //this.wait();
+//                            //Thread.sleep(1000);
+//                            Thread.yield();
+//                        }
+//
+////                    } catch (InterruptedException e) {
+////                        e.printStackTrace();
+////                    }
 //                }
+//                else{
+                    byte[] data = new byte[dataInput.available()];
+                    //dataInput.read(data);
+                    dataInput.readFully(data);
+                    // String stringData = new String(data);
 
-//                byte[] data = new byte[in.available()];
-//                in.readFully(data);
+                    dataReceived(new DAInputStream(new ByteArrayInputStream(data)));
+//                }
+            }
 
-               // String stringData = new String(data);
-
-                dataReceived(dataInput);
             }catch(SocketTimeoutException s) {
                 connectionTimeout();
-                break;
+                s.printStackTrace();
             } catch (IOException e) {
                 connectionLost();
-                break;
+                e.printStackTrace();
             }
-        }
     }
 }
