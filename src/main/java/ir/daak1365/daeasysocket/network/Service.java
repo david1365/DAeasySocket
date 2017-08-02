@@ -1,17 +1,17 @@
 package ir.daak1365.daeasysocket.network;
 
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.channels.AsynchronousServerSocketChannel;
 
 /**
  * Created by david on 1/4/17.
  */
 public final class Service implements Runnable {
     private ServerSocket serverSocket;
+    private final AsynchronousServerSocketChannel server = AsynchronousServerSocketChannel.open();
     private Factory factory;
     private int port;
     private int backlog;
