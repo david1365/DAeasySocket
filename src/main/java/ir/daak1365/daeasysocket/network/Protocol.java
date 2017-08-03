@@ -3,27 +3,37 @@ package ir.daak1365.daeasysocket.network;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.util.concurrent.*;
 
 /**
  * Created by david on 1/4/17.
  */
 public abstract class Protocol implements Runnable {
-    protected Socket socket;
+    protected AsynchronousSocketChannel client;
     protected DAOutputStream dataOutput;
 
-    public Socket getSocket() {
-        return socket;
+    public AsynchronousSocketChannel getClient() {
+        return client;
     }
 
-    public void setSocket(Socket socket) throws IOException {
-        this.socket = socket;
-        this.dataOutput = new DAOutputStream(this.socket.getOutputStream());
+    public void setClient(AsynchronousSocketChannel client) {
+        this.client = client;
 
         connectionMade();
     }
+
+//    public Socket getSocket() {
+//        return socket;
+//    }
+
+//    public void setSocket(Socket socket) throws IOException {
+//        this.socket = socket;
+//        this.dataOutput = new DAOutputStream(this.socket.getOutputStream());
+//
+//        connectionMade();
+//    }
 
 //    public void dataReceived(String data) throws IOException{
 //
@@ -33,7 +43,8 @@ public abstract class Protocol implements Runnable {
 //
 //    }
 
-    protected abstract void dataReceived(DAInputStream dataInput) throws IOException;
+//    protected abstract void dataReceived(DAInputStream dataInput) throws IOException;
+        protected abstract void dataReceived(ByteBuffer dataInput) throws IOException;
 
     protected abstract void connectionMade();
     protected abstract void connectionLost();
@@ -41,6 +52,37 @@ public abstract class Protocol implements Runnable {
 
 
     public void run() {
+        if ((client != null) && (client.isOpen())) {
+            ByteBuffer buffer = null;
+
+            while (true) {
+                buffer = ByteBuffer.allocate(32);
+                Future<Integer> readResult = client.read(buffer);
+
+                // perform other computations
+
+//                try {
+//                    readResult.get();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                } catch (ExecutionException e) {
+//                    e.printStackTrace();
+//                }
+
+                buffer.flip();
+//                Future<Integer> writeResult = clientChannel.write(buffer);
+
+                // perform other computations
+
+                try {
+                    dataReceived(buffer);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
 //        try {
 //            System.out.println(in.readUTF());
 //            out.writeUTF("Thank you for connecting to " + clientServerSocket.getLocalSocketAddress());
@@ -54,11 +96,11 @@ public abstract class Protocol implements Runnable {
 //            break;
 //        }
 
-        try {
-
-            while (true){
-
-                DataInputStream  dataInput = new DataInputStream(socket.getInputStream());
+//        try {
+//
+//            while (true){
+//
+//                DataInputStream  dataInput = new DataInputStream(socket.getInputStream());
 
 //                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -83,21 +125,21 @@ public abstract class Protocol implements Runnable {
 ////                    }
 //                }
 //                else{
-                    byte[] data = new byte[dataInput.available()];
-                    //dataInput.read(data);
-                    dataInput.readFully(data);
-                    // String stringData = new String(data);
-
-                    dataReceived(new DAInputStream(new ByteArrayInputStream(data)));
-//                }
-            }
-
-            }catch(SocketTimeoutException s) {
-                connectionTimeout();
-                s.printStackTrace();
-            } catch (IOException e) {
-                connectionLost();
-                e.printStackTrace();
-            }
+//                    byte[] data = new byte[dataInput.available()];
+//                    //dataInput.read(data);
+//                    dataInput.readFully(data);
+//                    // String stringData = new String(data);
+//
+//                    dataReceived(new DAInputStream(new ByteArrayInputStream(data)));
+////                }
+//            }
+//
+//            }catch(SocketTimeoutException s) {
+//                connectionTimeout();
+//                s.printStackTrace();
+//            } catch (IOException e) {
+//                connectionLost();
+//                e.printStackTrace();
+//            }
     }
 }

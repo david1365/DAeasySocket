@@ -7,7 +7,7 @@ import java.io.IOException;
  */
 public class TestEasy {
     public static void main(String[] args) throws IOException {
-        Service service = new Service(new PubFactory(), 5050);
+        Service service = new Service(5050, new PubFactory());
 
         service.start();
     }

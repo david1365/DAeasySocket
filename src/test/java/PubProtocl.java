@@ -5,16 +5,23 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 /**
  * Created by david on 1/4/17.
  */
 public class PubProtocl extends Protocol {
 
-    public void dataReceived(DAInputStream dataInput) throws IOException {
-        System.out.println("client " + dataInput.toString());
+//    public void dataReceived(DAInputStream dataInput) throws IOException {
+//        System.out.println("client " + dataInput.toString());
+//
+//        dataOutput.writeUTF("damet garm");
+//    }
 
-        dataOutput.writeUTF("damet garm");
+    protected void dataReceived(ByteBuffer dataInput) throws IOException {
+        this.client.write(dataInput);
+
+        //this.client.write("damet garm");
     }
 
     public void connectionMade() {
