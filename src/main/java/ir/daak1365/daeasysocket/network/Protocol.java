@@ -61,13 +61,13 @@ public abstract class Protocol implements Runnable {
 
                 // perform other computations
 
-//                try {
-//                    readResult.get();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                } catch (ExecutionException e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    readResult.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
 
                 buffer.flip();
 //                Future<Integer> writeResult = clientChannel.write(buffer);

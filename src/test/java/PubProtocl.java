@@ -21,6 +21,8 @@ public class PubProtocl extends Protocol {
     protected void dataReceived(ByteBuffer dataInput) throws IOException {
         this.client.write(dataInput);
 
+        System.out.println("get data");
+
         //this.client.write("damet garm");
     }
 
