@@ -1,5 +1,3 @@
-package ir.daak1365.daeasysocket;
-
 /**
  * Created by david on 1/3/17.
  */

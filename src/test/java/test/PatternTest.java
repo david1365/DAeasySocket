@@ -1,4 +1,4 @@
-package ir.daak1365.daeasysocket.test;
+package test;
 
 import ir.daak1365.daeasysocket.exception.InputParameterException;
 import static ir.daak1365.daeasysocket.exception.MessageExceptions.*;

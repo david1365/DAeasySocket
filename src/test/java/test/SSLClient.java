@@ -1,10 +1,10 @@
-package ir.daak1365.daeasysocket.test;
+package test;
 
 
 import java.io.*;
 
 import javax.net.ssl.*;
-import com.sun.net.ssl.*;
+
 import com.sun.net.ssl.internal.ssl.Provider;
 import java.security.Security;
 

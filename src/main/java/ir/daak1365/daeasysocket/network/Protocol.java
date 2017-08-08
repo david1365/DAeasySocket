@@ -1,8 +1,9 @@
 package ir.daak1365.daeasysocket.network;
 
+import ir.daak1365.daeasysocket.network.data.DAdata;
+import ir.daak1365.daeasysocket.network.data.DAOutputStream;
+
 import java.io.*;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.*;
@@ -44,7 +45,8 @@ public abstract class Protocol implements Runnable {
 //    }
 
 //    protected abstract void dataReceived(DAInputStream dataInput) throws IOException;
-        protected abstract void dataReceived(ByteBuffer dataInput) throws IOException;
+
+    protected abstract void dataReceived(DAdata dataInput) throws IOException;
 
     protected abstract void connectionMade();
     protected abstract void connectionLost();
@@ -57,9 +59,7 @@ public abstract class Protocol implements Runnable {
 
             while (true) {
                 buffer = ByteBuffer.allocate(32);
-                Future<Integer> readResult = client.read(buffer);
-
-                // perform other computations
+                Future readResult = client.read(buffer);
 
                 try {
                     readResult.get();
@@ -70,12 +70,9 @@ public abstract class Protocol implements Runnable {
                 }
 
                 buffer.flip();
-//                Future<Integer> writeResult = clientChannel.write(buffer);
-
-                // perform other computations
 
                 try {
-                    dataReceived(buffer);
+                    dataReceived(new DAdata(buffer));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

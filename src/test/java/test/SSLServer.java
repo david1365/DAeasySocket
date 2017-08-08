@@ -1,4 +1,4 @@
-package ir.daak1365.daeasysocket.test;
+package test;
 
 import java.io.*;
 import java.security.Security;

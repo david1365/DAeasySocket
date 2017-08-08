@@ -1,10 +1,7 @@
-import ir.daak1365.daeasysocket.network.DAInputStream;
 import ir.daak1365.daeasysocket.network.Protocol;
+import ir.daak1365.daeasysocket.network.data.DAdata;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 /**
@@ -18,10 +15,10 @@ public class PubProtocl extends Protocol {
 //        dataOutput.writeUTF("damet garm");
 //    }
 
-    protected void dataReceived(ByteBuffer dataInput) throws IOException {
-        this.client.write(dataInput);
+    protected void dataReceived(DAdata dataInput) throws IOException {
+        this.client.write(dataInput.byteBuffer());
 
-        System.out.println("get data");
+        System.out.println("get data" + dataInput.utf8());
 
         //this.client.write("damet garm");
     }

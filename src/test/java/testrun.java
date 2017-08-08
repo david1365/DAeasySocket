@@ -1,11 +1,9 @@
-package ir.daak1365.daeasysocket;
-
 /**
  * Created by david on 1/3/17.
  */
 
 import ir.daak1365.daeasysocket.exception.InputParameterException;
-import ir.daak1365.daeasysocket.test.PatternTest;
+import test.PatternTest;
 
 import java.io.IOException;
 

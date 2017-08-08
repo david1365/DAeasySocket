@@ -1,4 +1,4 @@
-package ir.daak1365.daeasysocket.network;
+package ir.daak1365.daeasysocket.network.data;
 
 import java.io.DataOutputStream;
 import java.io.FilterOutputStream;
