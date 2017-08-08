@@ -24,16 +24,11 @@ public final class Service extends InetSocketAddress implements Runnable {
     private Factory factory;
     private Executor executor;
     private String serviceType = SERVER;
-//    private int port;
-//    private int backlog;
-//    private InetAddress address;
+
     private boolean hasStopped = false;
 
 //    private int timeout = 0;
 //
-//    private final int FROM_TWO_PARAMETER = 2;
-//    private final int FROM_THREE_PARAMETER = 3;
-//    private final int FROM_FOUR_PARAMETER = 4;
 
     private static int parameterCount = 0;
     private static boolean usedSSL = false;
@@ -52,35 +47,15 @@ public final class Service extends InetSocketAddress implements Runnable {
         super(hostname, port);
         this.factory = factory;
     }
-//    public Service(Factory factory, int port) {
-//        this.factory = factory;
-//        this.port = port;
-//
-//        this.parameterCount = FROM_TWO_PARAMETER;
-//    }
-//
-//    public Service(Factory factory, int port, int backlog) {
-//        this(factory, port);
-//        this.backlog = backlog;
-//
-//        this.parameterCount = FROM_THREE_PARAMETER;
-//    }
-//
-//    public Service(Factory factory, int port, int backlog, InetAddress address) {
-//        this(factory, port, backlog);
-//        this.address = address;
-//
-//        this.parameterCount = FROM_FOUR_PARAMETER;
-//    }
 
-    public void useSSL(boolean usedSSl){
-        this.usedSSL = usedSSl;
-    }
+//    public void useSSL(boolean usedSSl){
+//        this.usedSSL = usedSSl;
+//    }
 
 
     private void openPort() throws IOException {
         if(serviceType == SERVER) {
-            server = AsynchronousServerSocketChannel.open(AsynchronousSocketChannel client);
+            server = AsynchronousServerSocketChannel.open();
             server.bind(this);
 
             this.factory.listening();
@@ -88,23 +63,6 @@ public final class Service extends InetSocketAddress implements Runnable {
         else {
             client = AsynchronousSocketChannel.open();
         }
-
-//        switch (parameterCount){
-//            case FROM_TWO_PARAMETER:
-//                server.bind(new InetSocketAddress(port));
-//                break;
-//            case FROM_THREE_PARAMETER:
-//                server.bind(new InetSocketAddress(port));
-//                server = new  ServerSocket(port, backlog);
-//                break;
-//            case FROM_FOUR_PARAMETER:
-//                server = new  ServerSocket(port, backlog, address);
-//                break;
-//        }
-
-
-
-//        server.setSoTimeout(timeout);
 
     }
 
@@ -116,15 +74,15 @@ public final class Service extends InetSocketAddress implements Runnable {
 //        this.timeout = timeout;
 //    }
 
-    private void create(){
+    private void create(Runnable service){
         //TODO:change this line with executer
-        new Thread(this).start();
+        new Thread(service).start();
     }
 
     public void start() throws IOException {
         serviceType = SERVER;
 
-        create();
+        create(this);
     }
 
     private Protocol protocol(AsynchronousSocketChannel client){
@@ -134,14 +92,14 @@ public final class Service extends InetSocketAddress implements Runnable {
         return protocol;
     }
 
-    private void server(){
+    private void serverRun(){
         try {
             openPort();
 
             executor = Executors.newCachedThreadPool();
 
             while(!hasStopped) {
-                //Socket newSocket = this.server.accept();
+                //Socket newSocket = this.serverRun.accept();
                 Future<AsynchronousSocketChannel> acceptFuture = server.accept();
 
                 AsynchronousSocketChannel client = null;
@@ -168,26 +126,23 @@ public final class Service extends InetSocketAddress implements Runnable {
     public void connectTCP(){
         serviceType = CLIENT;
 
-        create();
-    }
-
-    private void client(){
         try {
+
             openPort();
 
-            Future<Void> future = client.connect(this);
+            client.connect(this);
+
+            create(protocol(client));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+
+//-------------------------
     public void run() {
-        if(serviceType == SERVER){
-            server();
-        }
-        else {
-            client();
-        }
+            serverRun();
     }
 }
 

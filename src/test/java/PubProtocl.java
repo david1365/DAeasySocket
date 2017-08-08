@@ -18,7 +18,7 @@ public class PubProtocl extends Protocol {
     protected void dataReceived(DAdata dataInput) throws IOException {
         this.client.write(dataInput.byteBuffer());
 
-        System.out.println("get data" + dataInput.utf8());
+        System.out.println("get data-> " + dataInput.utf8());
 
         //this.client.write("damet garm");
     }

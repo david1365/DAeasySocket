@@ -9,5 +9,5 @@ import java.net.ServerSocket;
  */
 public abstract class Factory {
     public abstract Protocol buildProtocol();
-    public abstract void listening();
+    public void listening(){}
 }
