@@ -3,8 +3,8 @@ package ir.daak1365.daeasysocket.network;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+//import java.net.ServerSocket;
+//import java.net.Socket;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.ExecutionException;
@@ -16,9 +16,14 @@ import java.util.concurrent.Future;
  * Created by david on 1/4/17.
  */
 public final class Service extends InetSocketAddress implements Runnable {
+    private final static String SERVER = "SERVER";
+    private final static String CLIENT = "CLIENT";
+
     private AsynchronousServerSocketChannel server;
+    private AsynchronousSocketChannel client;
     private Factory factory;
     private Executor executor;
+    private String serviceType = SERVER;
 //    private int port;
 //    private int backlog;
 //    private InetAddress address;
@@ -74,8 +79,15 @@ public final class Service extends InetSocketAddress implements Runnable {
 
 
     private void openPort() throws IOException {
-        server = AsynchronousServerSocketChannel.open();
-        server.bind(this);
+        if(serviceType == SERVER) {
+            server = AsynchronousServerSocketChannel.open(AsynchronousSocketChannel client);
+            server.bind(this);
+
+            this.factory.listening();
+        }
+        else {
+            client = AsynchronousSocketChannel.open();
+        }
 
 //        switch (parameterCount){
 //            case FROM_TWO_PARAMETER:
@@ -94,7 +106,6 @@ public final class Service extends InetSocketAddress implements Runnable {
 
 //        server.setSoTimeout(timeout);
 
-        this.factory.listening();
     }
 
 //    public int getTimeout() {
@@ -105,12 +116,25 @@ public final class Service extends InetSocketAddress implements Runnable {
 //        this.timeout = timeout;
 //    }
 
-    public void start() throws IOException {
+    private void create(){
         //TODO:change this line with executer
         new Thread(this).start();
     }
 
-    public void run() {
+    public void start() throws IOException {
+        serviceType = SERVER;
+
+        create();
+    }
+
+    private Protocol protocol(AsynchronousSocketChannel client){
+        Protocol protocol = this.factory.buildProtocol();
+        protocol.setClient(client);
+
+        return protocol;
+    }
+
+    private void server(){
         try {
             openPort();
 
@@ -129,12 +153,7 @@ public final class Service extends InetSocketAddress implements Runnable {
                     e.printStackTrace();
                 }
 
-                Protocol protocol =  this.factory.buildProtocol();
-                protocol.setClient(client);
-
-                executor.execute(protocol);
-
-
+                executor.execute(protocol(client));
 
 //                new Thread(protocol).start();
 
@@ -143,6 +162,32 @@ public final class Service extends InetSocketAddress implements Runnable {
             e.printStackTrace();
         }
 
+    }
+
+    //-------------------------------------
+    public void connectTCP(){
+        serviceType = CLIENT;
+
+        create();
+    }
+
+    private void client(){
+        try {
+            openPort();
+
+            Future<Void> future = client.connect(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void run() {
+        if(serviceType == SERVER){
+            server();
+        }
+        else {
+            client();
+        }
     }
 }
 
