@@ -1,20 +1,19 @@
 package ir.daak1365.daeasysocket.network;
 
+import ir.daak1365.daeasysocket.network.data.DAClient;
 import ir.daak1365.daeasysocket.network.data.DAdata;
-import ir.daak1365.daeasysocket.network.data.DAOutputStream;
 
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.*;
 
 /**
  * Created by david on 1/4/17.
  */
 public abstract class Protocol implements Runnable {
-    protected AsynchronousSocketChannel client;
+    protected DAClient client;
 
-    public void setClient(AsynchronousSocketChannel client) {
+    public void setClient(DAClient client) {
         this.client = client;
 
         connectionMade();

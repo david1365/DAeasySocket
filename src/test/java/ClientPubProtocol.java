@@ -23,9 +23,8 @@ public class ClientPubProtocol extends Protocol {
     public void connectionMade() {
         System.out.println("client Connect...");
         String input = scanner.nextLine();
-        ByteBuffer buffer = ByteBuffer.wrap(input.getBytes());
 
-        client.write(buffer);
+        client.write(input);
     }
 
     public void connectionLost() {

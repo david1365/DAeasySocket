@@ -1,10 +1,10 @@
 package ir.daak1365.daeasysocket.network;
 
+import ir.daak1365.daeasysocket.network.data.DAClient;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-//import java.net.ServerSocket;
-//import java.net.Socket;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.ExecutionException;
@@ -63,7 +63,6 @@ public final class Service extends InetSocketAddress implements Runnable {
         else {
             client = AsynchronousSocketChannel.open();
         }
-
     }
 
 //    public int getTimeout() {
@@ -87,7 +86,7 @@ public final class Service extends InetSocketAddress implements Runnable {
 
     private Protocol protocol(AsynchronousSocketChannel client){
         Protocol protocol = this.factory.buildProtocol();
-        protocol.setClient(client);
+        protocol.setClient(new DAClient(client));
 
         return protocol;
     }
@@ -99,7 +98,6 @@ public final class Service extends InetSocketAddress implements Runnable {
             executor = Executors.newCachedThreadPool();
 
             while(!hasStopped) {
-                //Socket newSocket = this.serverRun.accept();
                 Future<AsynchronousSocketChannel> acceptFuture = server.accept();
 
                 AsynchronousSocketChannel client = null;
@@ -112,8 +110,6 @@ public final class Service extends InetSocketAddress implements Runnable {
                 }
 
                 executor.execute(protocol(client));
-
-//                new Thread(protocol).start();
 
             }
         } catch (IOException e) {

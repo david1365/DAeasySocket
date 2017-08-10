@@ -2,14 +2,12 @@ package ir.daak1365.daeasysocket.network.data;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
-import java.nio.HeapByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Created by david on 8/8/17.
  */
-public  class DAdata extends HeapByteBuffer {
-   private static final String UTF8 = "UTF-8";
-
+public class DAdata {
     private ByteBuffer buffer;
 
     public DAdata(ByteBuffer buffer) {
@@ -21,12 +19,12 @@ public  class DAdata extends HeapByteBuffer {
     }
 
     public final String string() {
-        return new String(buffer.array());
+        return new String(buffer.array()).trim();
     }
 
     public final String string(String charsetName) {
         try {
-            return new String(buffer.array(), charsetName);
+            return new String(buffer.array(), charsetName).trim();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -35,18 +33,19 @@ public  class DAdata extends HeapByteBuffer {
     }
 
     public final String utf8() {
-        return string(UTF8);
+        return string(StandardCharsets.UTF_8.name());
     }
 
     public final byte[] array() {
         return buffer.array();
     }
 
-    public ByteBuffer wrapByteBuffer(String message, String charsetName) throws UnsupportedEncodingException {
+    //-------------------------------------
+    public static ByteBuffer byteBuffer(String message, String charsetName) throws UnsupportedEncodingException {
         return ByteBuffer.wrap(message.getBytes(charsetName));
     }
 
-    public ByteBuffer wrapByteBuffer(String message){
+    public static ByteBuffer byteBuffer(String message) {
         return ByteBuffer.wrap(message.getBytes());
     }
 }
