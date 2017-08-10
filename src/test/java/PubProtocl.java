@@ -24,11 +24,11 @@ public class PubProtocl extends Protocol {
     }
 
     public void connectionMade() {
-        System.out.println("client Connect...");
+        System.out.println("client Connect to server...");
     }
 
     public void connectionLost() {
-
+        System.out.println("client close connection...");
     }
 
     public void connectionTimeout() {

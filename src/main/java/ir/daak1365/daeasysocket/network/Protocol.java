@@ -13,11 +13,6 @@ import java.util.concurrent.*;
  */
 public abstract class Protocol implements Runnable {
     protected AsynchronousSocketChannel client;
-    protected DAOutputStream dataOutput;
-
-    public AsynchronousSocketChannel getClient() {
-        return client;
-    }
 
     public void setClient(AsynchronousSocketChannel client) {
         this.client = client;
@@ -27,31 +22,35 @@ public abstract class Protocol implements Runnable {
 
     protected abstract void dataReceived(DAdata dataInput) throws IOException;
 
-    protected abstract void connectionMade();
-    protected abstract void connectionLost();
-    protected abstract void connectionTimeout();
+    protected void connectionMade(){}
+    protected void connectionLost(){}
+    protected void connectionTimeout(){}
 
+    private void close(){
+        try {
+            client.close();
+            connectionLost();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void run() {
-            ByteBuffer buffer = null;
+        ByteBuffer buffer = null;
+        if ((client == null) || (client.isOpen())) {
             while (true) {
-                if ((client == null) || (!client.isOpen())) {
-                    try {
-                        client.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    return;
-                }
-
+                //todo: add custom allocate
                 buffer = ByteBuffer.allocate(32);
-                Future readResult = client.read(buffer);
+                Future<Integer> readResult = client.read(buffer);
 
                 try {
-                    readResult.get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                    Integer resultStatus = readResult.get();
+                    if (resultStatus == -1){
+                        close();
+                        return;
+                    }
+
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
 
@@ -63,5 +62,6 @@ public abstract class Protocol implements Runnable {
                     e.printStackTrace();
                 }
             }
+        }
     }
 }

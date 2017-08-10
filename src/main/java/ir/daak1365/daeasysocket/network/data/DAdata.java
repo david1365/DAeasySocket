@@ -2,14 +2,15 @@ package ir.daak1365.daeasysocket.network.data;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.HeapByteBuffer;
 
 /**
  * Created by david on 8/8/17.
  */
-public class DAdata {
+public  class DAdata extends HeapByteBuffer {
    private static final String UTF8 = "UTF-8";
 
-   private ByteBuffer buffer;
+    private ByteBuffer buffer;
 
     public DAdata(ByteBuffer buffer) {
         this.buffer = buffer;
@@ -39,5 +40,13 @@ public class DAdata {
 
     public final byte[] array() {
         return buffer.array();
+    }
+
+    public ByteBuffer wrapByteBuffer(String message, String charsetName) throws UnsupportedEncodingException {
+        return ByteBuffer.wrap(message.getBytes(charsetName));
+    }
+
+    public ByteBuffer wrapByteBuffer(String message){
+        return ByteBuffer.wrap(message.getBytes());
     }
 }
